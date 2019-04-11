@@ -1,0 +1,52 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10005
+
+spring:
+  security:
+    user:
+      name: root
+      password: 123
+  application:
+    name: zuul
+
+# 下面整个树都非必须，如果不配置，将默认使用--> http://localhost:10005/想要访问的Eureka服务id的小写/访问路径
+# 路由到--> http://想要访问的Eureka服务id的小写:该服务端口/访问路径
+# http://localhost:10005/consumer/user/query/1 --> http://localhost:10002/user/query/1
+zuul:
+  prefix: /api
+  routes:
+    # 可以随便写，在zuul上面唯一即可；当这里的值 = service-id时，service-id可以不写。
+    consumer:
+      # 想要映射到的路径
+      path: /consumer/**
+      # Eureka中的serviceId
+      service-id: consumer
+  # 需要忽视的服务(配置后将不会被路由)
+  ignored-services: provider
+  # Zuul网关为了安全起见，把你的cookie信息都给干掉了，这个是没办法去搞cookie的。它是默认干掉的
+  # 如下配置对指定敏感头信息不过滤
+  sensitive-headers: cookie,header
+  # 表示屏蔽掉/consumer/**的路径
+  # ignored-patterns: /consumer/**
+
+#ribbon:
+#  eureka:
+#    enabled: false
+#
+#consumer:  #这是ribion要请求的serviceID
+#  ribbon:
+#    listOfServers: http://localhost:10002,http://localhost:10003
+
+# 注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+

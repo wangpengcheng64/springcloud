@@ -1,0 +1,29 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10006
+
+spring:
+  application:
+    name: config
+  #config访问git仓库拉去配置
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/wangpengcheng64/springcloud-config
+          username: 18942326329@163.com
+          password: wpc950122
+
+# 注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    # 启用ip配置 这样在注册中心列表中看见的是以ip+端口呈现的
+    prefer-ip-address: true
+    # 实例名称  最后呈现地址：ip:config:10006
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}

@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <contextName>logback</contextName>
+    <property name="log.path" value="/var/www/wpc/logs/cloud.consumer.log" />
+    <!-- 管控台日志打印，发布生产需注释 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder charset="utf-8"> <!-- encoder 可以指定字符集，对于中文输出有意义 -->
+            <!-- %.-1level 只显示信息级别的首字母,%-5level 左对齐显示信息级别全称 -->
+            <!-- 如需自定义关键字，用 %mdc{键名} 表示,程序中用MDC.put("键名","键值")设置，可动态设置 [%logger:%line]-->
+            <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</Pattern>
+        </encoder>
+    </appender>
+
+    <!-- 系统日志打印 -->
+    <appender name="logfile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${log.path}</File>
+        <encoder>
+            <Pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n</Pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>error.%d{yyyy-MM-dd}%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>512MB</maxFileSize>
+            </TimeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 外部jar包 日志级别设置 -->
+    <logger level="ERROR" name="com.zaxxer"/>
+    <logger level="ERROR" name="com.ibatis"/>
+    <logger level="ERROR" name="org.mybatis"/>
+    <logger level="INFO" name="org.springframework"/>
+    <logger level="ERROR" name="java.sql"/>
+    <logger level="ERROR" name="org.apache"/>
+    <logger level="INFO" name="com.alibaba"/>
+    <logger level="INFO" name="org.apache.zookeeper"/>
+    <logger level="ERROR" name="org.I0Itec"/>
+    <logger level="ERROR" name="org.dozer"/>
+    <logger level="OFF" name="org.jdbcdslog"/>
+    <logger level="ERROR" name="java.sql.SQLException"/>
+    <logger level="ERROR" name="org.jdbcdslog.StatementLogger"/>
+    <logger level="OFF" name="org.springframework.dao.CannotAcquireLockException"/>
+
+    <!--sql相关信息打印-->
+    <logger level="DEBUG" name="com.wpc.shiro.mapper" additivity="false">
+        <appender-ref ref="logfile"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- 线上日志输出到文件-->
+    <root level="INFO" name="com.wpc.shiro">
+        <appender-ref ref="logfile"/>
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>

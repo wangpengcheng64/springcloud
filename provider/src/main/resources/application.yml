@@ -1,0 +1,90 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10001
+#  servlet:
+#    context-path: /provider
+
+#注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+    #表明客户端需要将心跳发送到服务器端，以表明它还活着。如果心跳停止的时间超过了服务器设置的等待时间，那么服务器端将会从它的服务列表中删除该实例，从而将流量排除在该实例之外。默认30s
+    lease-renewal-interval-in-seconds: 30
+    #服务器端等待的时间，因为它收到了最后的心跳，然后才可以从它的视图中删除这个实例，并且不允许流量进入这个实例。
+    lease-expiration-duration-in-seconds: 90
+    #如果项目配置有 server.servlet.context-path 属性，想要被 spring boot admin 监控，就要配置以下属性
+#    metadata-map:
+#      management:
+#        context-path: /gateway/actuator
+#    health-check-url-path: /gateway/actuator/health
+
+#health endpoint只展示了简单的UP和DOWN状态。获得健康检查中所有指标的详细信息如下配置
+management:
+  endpoint:
+    health:
+      show-details: always
+
+#info端点默认是空的，我们可以在application配置文件中配置info前缀的属性来完善
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+    encoding: @project.build.sourceEncoding@
+    java:
+      version: @java.version@
+
+logging:
+  level:
+    com.netflix: DEBUG
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+  http:
+    encoding:
+      charset: utf-8
+      force: true
+      enabled: true
+  application:
+    name: provider
+
+  #整合数据库
+  datasource:
+    druid:
+      name: face
+      url: jdbc:mysql://47.107.153.54:3307/cloud?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
+      username: root
+      password: 123456
+      # 使用druid数据源
+      db-type: com.alibaba.druid.pool.DruidDataSource
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      filters: stat
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+
+## 该配置节点为独立的节点，有很多同学容易将这个配置放在spring的节点下，导致配置无法被识别
+mybatis:
+  mapper-locations: classpath:mapping/*.xml  #注意：一定要对应mapper映射xml文件的所在路径
+  type-aliases-package: com.wpc.cloud.provider.bean  # 注意：对应实体类的路径
+

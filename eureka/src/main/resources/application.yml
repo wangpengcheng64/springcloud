@@ -1,0 +1,57 @@
+#高可用复用配置
+spring:
+  security:
+    user:
+      name: root
+      password: 123
+  #配置服务名
+  application:
+    name: eureka
+
+eureka:
+  client:
+    #该服务为注册中心，增加此行代表不在注册中心注册自己
+    register-with-eureka: false
+    #由于注册中心呢的职责是维护实例，为FALSE代表其不用去检索服务
+    fetch-registry: false
+    #开启健康检查
+    healthcheck:
+      enabled: true
+  server:
+    #自我保护模式关闭
+    enable-self-preservation: false
+    #服务器清理服务列表的定时器，默认60s，注意时间是毫秒
+    eviction-interval-timer-in-ms: 10000
+
+---
+server:
+  #配置eurekaServer的端口号
+  port: 8761
+spring:
+  profiles: peer1
+
+eureka:
+  client:
+    service-url:
+      #代表注册到eureka服务端的地址
+      #defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  #配置主机名
+  instance:
+    hostname: peer1
+
+---
+server:
+  #配置eurekaServer的端口号
+  port: 8762
+spring:
+  profiles: peer2
+
+eureka:
+  client:
+    service-url:
+    #代表注册到eureka服务端的地址
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  #配置主机名
+  instance:
+    hostname: peer2

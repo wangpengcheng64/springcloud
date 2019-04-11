@@ -1,0 +1,21 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10003
+
+spring:
+  application:
+    name: hystrix-dashboard
+
+# 注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+# 启动路径：http://localhost:10003/hystrix 或 http://localhost:10003

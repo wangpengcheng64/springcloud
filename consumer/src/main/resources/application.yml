@@ -1,0 +1,31 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10002
+#  servlet:
+#    context-path: /consumer
+
+#info端点默认是空的，我们可以在application配置文件中配置info前缀的属性来完善
+info:
+  app:
+    name: @project.name@
+    description: @project.description@
+    version: @project.version@
+    encoding: @project.build.sourceEncoding@
+    java:
+      version: @java.version@
+
+# 解决第一次请求报超时异常的方案：
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 5000
+
+logging:
+  level:
+    com.netflix: DEBUG

@@ -1,0 +1,47 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        # 表示使用服务发现组件中的Config Server，而不自己指定Config Server的uri，默认false
+        enabled: true
+        # 指定Config Server在服务发现中的serviceId，默认是configserver
+        service-id: config
+  application:
+    name: consumer
+  profiles:
+    active: dev
+
+#开启feign的hystrix支持
+feign:
+  hystrix:
+    enabled: true
+
+# Ribbon 的负载均衡策略
+#spring-demo-service:
+#  ribbon:
+#    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.BestAvailableRule
+
+# 注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+    #如果项目配置有 server.servlet.context-path 属性，想要被 spring boot admin 监控，就要配置以下属性
+#    metadata-map:
+#      management:
+#        context-path: /gateway
+#    health-check-url-path: /gateway/actuator/health
+
+#health endpoint只展示了简单的UP和DOWN状态。获得健康检查中所有指标的详细信息如下配置
+management:
+  endpoint:
+    health:
+      show-details: always
+  #management.endpoints.web.exposure.include 配置actuator 暴露的接入点，默认值为health和info，可指定health,info,hystrix.stream,refresh
+  endpoints:
+    web:
+      exposure:
+        include: '*'

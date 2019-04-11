@@ -1,0 +1,37 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 1000
+    min-spare-threads: 30
+  port: 10004
+
+spring:
+  application:
+    name: hystrix-turbine
+
+# 注册服务至eureka上
+eureka:
+  client:
+    service-url:
+      defaultZone: http://root:123@peer1:8761/eureka/,http://root:123@peer2:8762/eureka/
+  instance:
+    # 启用ip配置 这样在注册中心列表中看见的是以ip+端口呈现的
+    prefer-ip-address: true
+    # 实例名称  最后呈现地址：ip:hystrix-turbine:10004
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+#turbine配置
+turbine:
+  # 需要监控的应用名称，默认逗号隔开，内部使用StringUtils.commaDelimitedListToStringArray分割
+  app-config: consumer
+  # 集群名称
+  cluster-name-expression: "'default'"
+  # true 同一主机上的服务通过host和port的组合来进行区分，默认为true
+  # false 时 在本机测试时 监控中host集群数会为1了 因为本地host是一样的
+  combine-host-port: true
+  # turbine在收集的时候由于访问的是/hystrix.stream，而此时收集端点却是/actuator/hystrix.stream
+  # 默认是集群里的应用都配置了 context-path
+  instanceUrlSuffix: /actuator/hystrix.stream
+  aggregator:
+    cluster-config: default
+# 启动路径：http://localhost:10004/turbine.stream

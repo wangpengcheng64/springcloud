@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="config" />
+        <module name="consumer" />
+        <module name="eureka" />
+        <module name="hystrix-dashboard" />
+        <module name="hystrix-turbine" />
+        <module name="provider" />
+        <module name="zuul" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel target="1.8">
+      <module name="config" target="1.8" />
+      <module name="consumer" target="1.8" />
+      <module name="eureka" target="1.8" />
+      <module name="hystrix-dashboard" target="1.8" />
+      <module name="hystrix-turbine" target="1.8" />
+      <module name="provider" target="1.8" />
+      <module name="springcloud" target="1.8" />
+      <module name="zuul" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
